@@ -7,10 +7,10 @@ const postDocs = [];
 try {
   const postRef = db.collection('Posts').orderBy('timestamp', 'desc');
   // running an initial get to setup first getStaticProps otherwise they are [] empty, then listener can take over below
-  // const initSnap = await postRef.get();
-  // initSnap.forEach((doc) => {
-  //   initPosts.push({ id: doc.id, data: { ...doc.data() } });
-  // });
+  const initSnap = await postRef.get();
+  initSnap.forEach((doc) => {
+    initPosts.push({ id: doc.id, data: doc.data() });
+  });
   console.log('init ran');
   // take over as listener
   postRef.onSnapshot(
@@ -36,13 +36,14 @@ try {
   console.log(err);
 }
 
-await new Promise((resolve) => setTimeout(resolve, 1000));
+// await new Promise((resolve) => setTimeout(resolve, 1000));
 
 export default async function handler(req, res) {
+  console.log(postDocs.length);
   // Check for secret to confirm this is a valid request
   if (req.method === 'OPTIONS') return res.status(200).send(); // takes care of browser preflight
 
   if (req.body.api_key !== process.env.API_ROUTE_SECRET) {
     return res.status(401).send('Not Authorised To Access This API');
-  } else return res.status(200).json(postDocs);
+  } else return res.status(200).json(postDocs.length ? postDocs : initPosts);
 }
