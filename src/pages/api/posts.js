@@ -1,6 +1,7 @@
 import { createFirebaseAdminApp } from 'src/lib/createFireBaseAdminApp';
 const { db } = createFirebaseAdminApp();
 // const host = process.env.NODE_ENV === 'development' ? 'http://192.168.0.220:5002' : 'https://scc-prod.vercel.app'; /* : 'https://www.scc.com'; */
+const initPosts = [];
 const postDocs = [];
 
 try {
@@ -8,7 +9,7 @@ try {
   // running an initial get to setup first getStaticProps otherwise they are [] empty, then listener can take over below
   const initSnap = await postRef.get();
   initSnap.forEach((doc) => {
-    postDocs.push({ id: doc.id, data: { ...doc.data(), timestamp: doc.data().timestamp?.toDate().getTime() } });
+    initPosts.push({ id: doc.id, data: { ...doc.data(), timestamp: doc.data().timestamp?.toDate().getTime() } });
   });
   // take over as listener
   postRef.onSnapshot(
@@ -36,7 +37,9 @@ try {
 
 export default async function handler(req, res) {
   // Check for secret to confirm this is a valid request
+  if (req.method === 'OPTIONS') return res.status(200).send(); // takes care of browser preflight
+
   if (req.body.api_key !== process.env.API_ROUTE_SECRET) {
     return res.status(401).send('Not Authorised To Access This API');
-  } else return res.status(200).json(postDocs);
+  } else return res.status(200).json(postDocs.length ? postDocs : initPosts);
 }
