@@ -2,7 +2,7 @@ import { createFirebaseAdminApp } from 'src/lib/createFireBaseAdminApp';
 const { db } = createFirebaseAdminApp();
 // const host = process.env.NODE_ENV === 'development' ? 'http://192.168.0.220:5002' : 'https://scc-prod.vercel.app'; /* : 'https://www.scc.com'; */
 const initPosts = [];
-const postDocs = [];
+let postDocs = [];
 
 try {
   const postRef = db.collection('Posts').orderBy('timestamp', 'desc');
