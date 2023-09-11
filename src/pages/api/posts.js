@@ -6,11 +6,7 @@ let postDocs = [];
 
 try {
   const postRef = db.collection('Posts').orderBy('timestamp', 'desc');
-  // running an initial get to setup first getStaticProps otherwise they are [] empty, then listener can take over below
-  const initSnap = await postRef.get();
-  initSnap.forEach((doc) => {
-    initPosts.push({ id: doc.id, data: doc.data() });
-  });
+
   console.log('init ran');
   // take over as listener
   postRef.onSnapshot(
@@ -30,6 +26,11 @@ try {
       console.log(`Encountered error: ${err}`);
     }
   );
+  // running an initial get to setup first getStaticProps otherwise they are [] empty, then listener can take over above
+  const initSnap = await postRef.get();
+  initSnap.forEach((doc) => {
+    initPosts.push({ id: doc.id, data: doc.data() });
+  });
 } catch (err) {
   // If there was an error, Next.js will continue
   // to show the last successfully generated page
