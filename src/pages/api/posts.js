@@ -5,7 +5,7 @@ const initPosts = [];
 let postDocs = [];
 
 try {
-  const postRef = db.collection('Posts').orderBy('timestamp', 'desc');
+  const postRef = db.collection('posts').orderBy('timestamp', 'desc');
 
   console.log('init ran');
   // take over as listener
