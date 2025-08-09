@@ -10,7 +10,7 @@ export default function Home() {
       </Head>
       <main>
         <div>
-          <p>Up</p>
+          <p>👌 SCC Server 👌</p>
         </div>
       </main>
     </>
