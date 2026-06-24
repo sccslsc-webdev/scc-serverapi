@@ -48,5 +48,8 @@ export default async function handler(req, res) {
 
   if (req.body.api_key !== process.env.API_ROUTE_SECRET) {
     return res.status(401).send('Not Authorised To Access This API');
-  } else return res.status(200).json(postDocs.length ? postDocs : initPosts);
+  }
+  const posts = postDocs.length ? postDocs : initPosts;
+  const { limit } = req.body;
+  return res.status(200).json(limit ? posts.slice(0, limit) : posts);
 }
